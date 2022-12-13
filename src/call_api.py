@@ -1,5 +1,10 @@
 from requests import Request, Session
 import json
+import os
+from dotenv import load_dotenv
+from icecream import ic
+
+load_dotenv()
 
 
 def get_usd_per_btc():
@@ -17,7 +22,7 @@ def get_sats_per_usd():
     rounded_sats_per_usd = _round_price(sats_per_usd, 0)
     int_sats_per_usd = int(rounded_sats_per_usd)
 
-    return(int_sats_per_usd)
+    return int_sats_per_usd
 
 
 ##########################################################################
@@ -42,6 +47,7 @@ def _extract_usd_per_btc_from_api_response(api_response):
     int_usd_per_btc = int(rounded_usd_per_btc)
 
     return int_usd_per_btc
+
 
 def _get_sats_per_btc():
     # hundred million sats per btc
@@ -70,19 +76,17 @@ def _get_api_uri():
 
 
 def _get_request_parameters():
-    request_parameters = {
-        "start": "1",
-        "limit": "1",
-        "convert": "USD"
-    }
+    request_parameters = {"start": "1", "limit": "1", "convert": "USD"}
 
     return request_parameters
 
 
 def _get_api_key():
-    api_key = "API_KEY"
-
-    return api_key
+    api_key = os.environ.get("API_KEY")
+    if api_key:
+        return api_key
+    else:
+        raise KeyError("Unable to find the environment variable: API_KEY")
 
 
 def _get_request_headers():
